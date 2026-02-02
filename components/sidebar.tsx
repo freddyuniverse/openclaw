@@ -7,17 +7,14 @@ import {
   Users,
   Settings,
   Activity,
-  Clock,
-  Zap,
-  MonitorSmartphone,
-  ScrollText,
   ChevronLeft,
   ChevronRight,
+  LayoutDashboard,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
-type View = "chat" | "channels" | "sessions" | "nodes" | "cron" | "skills" | "logs" | "settings"
+type View = "dashboard" | "chat" | "channels" | "sessions" | "settings"
 
 interface SidebarProps {
   currentView: View
@@ -28,13 +25,10 @@ interface SidebarProps {
 }
 
 const navItems: { id: View; label: string; icon: React.ElementType }[] = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "chat", label: "Chat", icon: MessageSquare },
   { id: "channels", label: "Channels", icon: Radio },
   { id: "sessions", label: "Sessions", icon: Users },
-  { id: "nodes", label: "Nodes", icon: MonitorSmartphone },
-  { id: "cron", label: "Cron Jobs", icon: Clock },
-  { id: "skills", label: "Skills", icon: Zap },
-  { id: "logs", label: "Logs", icon: ScrollText },
   { id: "settings", label: "Settings", icon: Settings },
 ]
 
@@ -58,7 +52,7 @@ export function Sidebar({
           <div className="flex items-center gap-2 overflow-hidden">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                <path d="M12 3c-1.5 0-2.8.5-3.9 1.3L5.5 6.8C4.5 8 4 9.5 4 11c0 2.5 1.4 4.6 3.5 5.6L6 21h4l1-3h2l1 3h4l-1.5-4.4c2.1-1 3.5-3.1 3.5-5.6 0-1.5-.5-3-1.5-4.2l-2.6-2.5C15.8 3.5 14 3 12 3zm-3 8c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm6 0c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z"/>
               </svg>
             </div>
             {!collapsed && (
@@ -82,7 +76,7 @@ export function Sidebar({
                     className={cn(
                       "h-4 w-4",
                       connectionStatus === "connected" && "text-green-500",
-                      connectionStatus === "connecting" && "text-yellow-500",
+                      connectionStatus === "connecting" && "text-amber-500",
                       connectionStatus === "disconnected" && "text-red-500"
                     )}
                   />
@@ -92,14 +86,14 @@ export function Sidebar({
                 </div>
                 {!collapsed && (
                   <span className="text-xs text-muted-foreground capitalize">
-                    {connectionStatus}
+                    Gateway {connectionStatus}
                   </span>
                 )}
               </div>
             </TooltipTrigger>
             {collapsed && (
               <TooltipContent side="right">
-                <span className="capitalize">{connectionStatus}</span>
+                <span className="capitalize">Gateway {connectionStatus}</span>
               </TooltipContent>
             )}
           </Tooltip>
@@ -115,7 +109,7 @@ export function Sidebar({
                   <button
                     onClick={() => onViewChange(item.id)}
                     className={cn(
-                      "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                       collapsed && "justify-center px-2",
                       isActive
                         ? "bg-primary/10 text-primary"
@@ -134,8 +128,13 @@ export function Sidebar({
           })}
         </nav>
 
-        {/* Collapse Toggle */}
-        <div className="border-t border-border p-2">
+        {/* Version & Collapse */}
+        <div className="border-t border-border p-2 space-y-2">
+          {!collapsed && (
+            <div className="px-3 py-1">
+              <span className="text-xs text-muted-foreground">v2026.1.30</span>
+            </div>
+          )}
           <Button
             variant="ghost"
             size="sm"
